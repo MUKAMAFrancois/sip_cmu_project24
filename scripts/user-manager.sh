@@ -37,11 +37,18 @@ initialize_admin() {
 
 # Function to initiate patient registration
 initiate_registration() {
-  echo "Initiating patient registration..."
-  read -p "Enter patient email: " patient_email
-  uuid=$(uuidgen)
-  echo "$patient_email,$uuid,,Patient" >> "$USER_STORE"
-  echo "Patient registration initiated. Email: $patient_email, Code: $uuid"
+  while true; do
+    echo "Initiating patient registration..."
+    read -p "Enter patient email: " patient_email
+    uuid=$(uuidgen)
+    echo "$patient_email,$uuid,,Patient" >> "$USER_STORE"
+    echo "Patient registration initiated. Email: $patient_email, Code: $uuid"
+
+    read -p "Do you want to add another patient? (y/n): " choice
+    if [[ "$choice" != "y" ]]; then
+      break
+    fi
+  done
 }
 
 # Function to check if the user exists in the store
@@ -96,24 +103,83 @@ login_user() {
   fi
 }
 
-# Main menu
-main_menu() {
-  echo "1. Initialize Admin"
+# function to view user list: download csv file
+view_user_list(){
+
+
+}
+
+#function get analytics
+get_analytics(){
+  
+}
+
+
+# Admin menu
+admin_menu() {
+  echo "1. Initialize Admin Account"
   echo "2. Initiate Patient Registration"
-  echo "3. Complete Patient Registration"
-  echo "4. Login"
+  echo "3. View User List (csv)"
+  echo "4. Get Analytics (csv)"
   echo "5. Exit"
   read -p "Choose an option: " choice
   case $choice in
     1) initialize_admin ;;
     2) initiate_registration ;;
-    3) complete_registration ;;
-    4) login_user ;;
+    3) view_user_list ;;
+    4) get_analytics ;;
     5) exit 0 ;;
     *) echo "Invalid option" ;;
   esac
 }
 
-while true; do
-  main_menu
-done
+# Function to view user profile
+view_profile() {
+  echo "Viewing profile... under process"
+  
+}
+
+# Function to update user profile
+update_profile() {
+  echo "Updating profile... under process"
+  
+}
+
+# Patient menu
+patient_menu() {
+  echo "1. Complete Registration"
+  echo "2. View Profile"
+  echo "3. Update Profile"
+  echo "4. Exit"
+  read -p "Choose an option: " choice
+  case $choice in
+    1) complete_registration ;;
+    2) view_profile ;;
+    3) update_profile;;
+    4) exit 0 ;;
+    *) echo "Invalid option" ;;
+  esac
+}
+
+# Main logic
+if [ -z "$1" ]; then
+  echo "Choose an option: "
+  echo "1. Admin"
+  echo "2. Patient"
+  read -p "Enter your choice: " user_type
+else
+  user_type=$1
+fi
+
+if [ "$user_type" == "admin" ] || [ "$user_type" == "1" ]; then
+  while true; do
+    admin_menu
+  done
+elif [ "$user_type" == "patient" ] || [ "$user_type" == "2" ]; then
+  while true; do
+    patient_menu
+  done
+else
+  echo "Invalid argument. Use 'admin' or 'patient'."
+  exit 1
+fi
