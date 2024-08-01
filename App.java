@@ -1,6 +1,6 @@
 import java.util.Scanner;
-import classes.Patient;
-import classes.Admin;
+import src.Patient;
+import src.Admin;
 import java.util.UUID;
 import java.util.Date;
 import java.text.SimpleDateFormat;

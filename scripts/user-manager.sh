@@ -1,7 +1,9 @@
 #!/usr/bin/bash
 
-USER_STORE="user-store.txt"
+USER_STORE="data/user-store.txt"
+ADMIN_CREDENTIALS="data/admin-credentials.txt"
 HASH_ALGO="sha256"
+
 # SHA-256 (Secure Hash Algorithm 256-bit) is a cryptographic 
 # hash function that generates a fixed-size 256-bit (32-byte) 
 # hash value from input data of any size. It is part of the SHA-2 
@@ -18,18 +20,18 @@ hash_password() {
 
 # Function to add initial admin
 initialize_admin() {
-  if [ ! -f "$USER_STORE" ]; then
-    touch "$USER_STORE"
+  if [ ! -f "$ADMIN_CREDENTIALS" ]; then
+    touch "$ADMIN_CREDENTIALS"
     echo "Creating initial admin..."
     read -p "Enter admin email: " admin_email
     read -sp "Enter admin password: " admin_password
     echo
     hashed_password=$(hash_password "$admin_password")
     uuid=$(uuidgen)
-    echo "$admin_email,$uuid,$hashed_password,Admin" >> "$USER_STORE"
+    echo "$admin_email,$uuid,$hashed_password,Admin" >> "$ADMIN_CREDENTIALS"
     echo "Admin created successfully."
   else
-    echo "User store already exists. Initialization skipped."
+    echo "Admin credentials already exist. Initialization skipped."
   fi
 }
 
