@@ -2,6 +2,9 @@
 
 USER_STORE="data/user-store.txt"
 ADMIN_CREDENTIALS="data/admin-credentials.txt"
+USER_LIST_CSV="data/user_list.csv"
+ANALYTICS_CSV="data/analytics.csv"
+
 HASH_ALGO="sha256"
 
 # SHA-256 (Secure Hash Algorithm 256-bit) is a cryptographic 
@@ -59,7 +62,7 @@ check_user_exists() {
 # Function to complete patient registration
 complete_registration() {
   echo "Completing patient registration..."
-  read -p "Enter registration code: " reg_code
+  read -p "Enter uuid code you got from admin: " reg_code
   if check_user_exists "$reg_code"; then
     read -p "Enter First Name: " first_name
     read -p "Enter Last Name: " last_name
@@ -103,17 +106,22 @@ login_user() {
   fi
 }
 
-# function to view user list: download csv file
-view_user_list(){
-
-
+# Function to view user list: download csv file
+view_user_list() {
+  echo "Generating user list CSV..."
+  echo "Email,UUID,Password,First Name,Last Name,Date of Birth,HIV Status,Diagnosis Date,ART Status,ART Start Date,Country of Residence" > "$USER_LIST_CSV"
+  awk -F ',' 'BEGIN {OFS=","} {print $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11}' "$USER_STORE" >> "$USER_LIST_CSV"
+  echo "User list CSV generated at $USER_LIST_CSV"
 }
 
-#function get analytics
-get_analytics(){
-  
+# Function to get analytics: download csv file
+get_analytics() {
+  echo "Generating analytics CSV..."
+  echo "Total Patients" > "$ANALYTICS_CSV"
+  total_patients=$(grep -c "Patient" "$USER_STORE")
+  echo "$total_patients" >> "$ANALYTICS_CSV"
+  echo "Analytics CSV generated at $ANALYTICS_CSV"
 }
-
 
 # Admin menu
 admin_menu() {
@@ -136,13 +144,11 @@ admin_menu() {
 # Function to view user profile
 view_profile() {
   echo "Viewing profile... under process"
-  
 }
 
 # Function to update user profile
 update_profile() {
   echo "Updating profile... under process"
-  
 }
 
 # Patient menu
@@ -155,7 +161,7 @@ patient_menu() {
   case $choice in
     1) complete_registration ;;
     2) view_profile ;;
-    3) update_profile;;
+    3) update_profile ;;
     4) exit 0 ;;
     *) echo "Invalid option" ;;
   esac
@@ -163,6 +169,7 @@ patient_menu() {
 
 # Main logic
 if [ -z "$1" ]; then
+echo "Welcome to Life Prognosis Management Tool."
   echo "Choose an option: "
   echo "1. Admin"
   echo "2. Patient"
